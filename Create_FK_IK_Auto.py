@@ -19,18 +19,8 @@ class create_fk_ik_class(QtWidgets.QDialog):
     
     numb = None
     
-    create_fk_ik_instance = None
+    dialog_reference = None
     
-    @classmethod
-    def show_dialog(cls):
-        
-        if not cls.create_fk_ik_instance:
-            cls.create_fk_ik_instance = create_fk_ik_class()
-        if cls.create_fk_ik_instance.isHidden():
-            cls.create_fk_ik_instance.show()
-        else:
-            cls.create_fk_ik_instance.raise_()
-            cls.create_fk_ik_instance.activateWindow()
     
     def __init__(self,parent=maya_main_window()):
         super(create_fk_ik_class,self).__init__(parent)
@@ -43,6 +33,21 @@ class create_fk_ik_class(QtWidgets.QDialog):
         self.createlayout()
         self.connectsignalslot()
     
+    @classmethod
+    def show_dialog(cls):
+        
+        if cls.dialog_reference:
+                
+            if cls.dialog_reference.isHidden():
+                cls.dialog_reference.show()
+            else:
+                cls.dialog_reference.raise_()
+                cls.dialog_reference.activateWindow()
+        else:
+            cls.dialog_reference = create_fk_ik_class()
+            cls.dialog_reference.show()    
+
+
     def createwidget(self):
         
         self.LE_startjnt = QtWidgets.QLineEdit()
@@ -324,10 +329,13 @@ class create_fk_ik_class(QtWidgets.QDialog):
                     last_numb_ik = 0
                 
                 jnt_renamed_ik = cmds.rename("{0}_{1}".format(new_name_ik,last_numb_ik))
+                jnt_renamed_ik = jnt_renamed_ik.split("|")[-1]
+
             else:
                 jnt_renamed_ik = cmds.rename(new_name_ik)
+                jnt_renamed_ik = jnt_renamed_ik.split("|")[-1]
+                
             
-            jnt_renamed_ik = cmds.rename(name_jnt_ik.replace(example,jnt_main_name_ik))
             
             if jnt_main_name_ik != last_text :
                 cmds.select(jnt_renamed_ik,deselect = True)
@@ -343,7 +351,6 @@ class create_fk_ik_class(QtWidgets.QDialog):
                     cmds.select(jnt_renamed_ik,deselect=True)
                     cmds.delete()
                 break    
-        
         
         self.clean_garbage_obj(name_jnt_fk,name_jnt_ik,example)
         self.create_attr()
@@ -518,18 +525,8 @@ class create_fk_ik_class(QtWidgets.QDialog):
         cmds.select(self.IK_LIST_NAME[0],hierarchy=True)
         for ik_jnt in self.IK_LIST_NAME:
             cmds.select(ik_jnt,deselect=True)
-        if cmds.ls(sl=True):
+        if cmds.ls(sl=True,absoluteName=True):
             cmds.delete()
             
         self.removed_list_obj = []
-        
-if __name__ == "__main__":
 
-    try:
-        open_import_dialog.close() # pylint: disable=E0601
-        open_import_dialog.deleteLater()
-    except:
-        pass
-
-    open_import_dialog = create_fk_ik_class()
-    open_import_dialog.show()
