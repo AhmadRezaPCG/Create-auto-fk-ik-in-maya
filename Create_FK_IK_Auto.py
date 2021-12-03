@@ -1,3 +1,18 @@
+###############################################################################
+# Name: 
+#   Create auto FK IK in maya
+#
+# Description: 
+#   Quickly created IK and FK just by one click . 
+#   
+#
+# Author: 
+#   Ahmadreza Rezaei
+#
+# Copyright (C) 2022 Ahmadreza Rezaei. All rights reserved.
+###############################################################################
+
+
 import maya.cmds as cmds
 import maya.OpenMayaUI as omui
 import maya.OpenMaya as om
